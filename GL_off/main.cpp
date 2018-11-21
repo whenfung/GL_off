@@ -34,6 +34,42 @@ const vec3 vertex_colors[8] = {
 	vec3(0.0, 0.0, 1.0)   // Blue
 };
 
+//----------------------------------缩放、平移、旋转需要的变量
+const int X_AXIS = 0;
+const int Y_AXIS = 1;
+const int Z_AXIS = 2;
+
+const int TRANSFORM_SCALE = 0;
+const int TRANSFORM_ROTATE = 1;
+const int TRANSFORM_TRANSLATE = 2;
+
+const double DELTA_DELTA = 0.1;        // Delta的变化率
+const double DEFAULT_DELTA = 0.3;      // 默认的Delta值
+
+double scaleDelta = DEFAULT_DELTA;
+double rotateDelta = DEFAULT_DELTA;
+double translateDelta = DEFAULT_DELTA;
+
+vec3 scaleTheta(1.0, 1.0, 1.0);        // 缩放控制变量
+vec3 rotateTheta(0.0, 0.0, 0.0);       // 旋转控制变量
+vec3 translateTheta(0.0, 0.0, 0.0);    // 平移控制变量
+
+GLuint mainWin;                                //主窗口
+GLint matrixLocation;                          //矩阵位置
+int currentTransform = TRANSFORM_TRANSLATE;    // 当前绕哪个轴旋转
+
+//-----------------------------------------------以下是实现
+// 复原Theta和Delta
+void resetTheta()
+{
+	scaleTheta = vec3(1.0, 1.0, 1.0);
+	rotateTheta = vec3(0.0, 0.0, 0.0);
+	translateTheta = vec3(0.0, 0.0, 0.0);
+	scaleDelta = DEFAULT_DELTA;
+	rotateDelta = DEFAULT_DELTA;
+	translateDelta = DEFAULT_DELTA;
+}
+
 void read_off(string filename) {
 	if (filename.empty()) return;
 
@@ -118,13 +154,26 @@ void init() {
 	glEnableVertexAttribArray(cLocation);
 	glVertexAttribPointer(cLocation, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points.size() * sizeof(vec3)));
 
+	// 获得矩阵存储位置
+	matrixLocation = glGetUniformLocation(program, "matrix");  
+
 	//黑色背景
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 }
 
-void display() {
+void display() {   //这里才用到片元着色器
 	//清理窗口，包括颜色缓存和深度缓存
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//创建一个单位矩阵，过会用
+	mat4 m(1.0, 0.0, 0.0, 0.0,
+		   0.0, 1.0, 0.0, 0.0,
+		   0.0, 0.0, 1.0, 0.0,
+		   0.0, 0.0, 0.0, 1.0);
+
+	// 调用函数传入三种变化的变化量，计算变化矩阵
+
+
 	//------------------下面这段注释可以打开看看有什么惊喜---------------//
 	// 绘制边
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

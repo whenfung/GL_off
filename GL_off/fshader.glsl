@@ -1,9 +1,8 @@
 #version 330 core
 
 in vec3 color;
-out vec4 fColor;
 
 void main()
 {
-    fColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, 1.0);  //gl_FragColor是内置颜色变量，会将其传到光栅化后的像素中
 }
