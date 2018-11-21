@@ -125,6 +125,15 @@ void init() {
 void display() {
 	//清理窗口，包括颜色缓存和深度缓存
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//------------------下面这段注释可以打开看看有什么惊喜---------------//
+	// 绘制边
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// 消除背面光照
+	// 开启面剔除功能
+	//glEnable(GL_CULL_FACE);
+	// 修改剔除的面的类型-GL_BACK & GL_FRONT
+	//glCullFace(GL_FRONT);
+	//-------------------------------------------------------------------//
 
 	//绘制顶点
 	glDrawArrays(GL_TRIANGLES, 0, points.size()); //每三个点为一个三角形，绘制正方体
