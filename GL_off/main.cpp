@@ -34,40 +34,22 @@ const vec3 vertex_colors[8] = {
 	vec3(0.0, 0.0, 1.0)   // Blue
 };
 
-//----------------------------------缩放、平移、旋转需要的变量
-const int X_AXIS = 0;
-const int Y_AXIS = 1;
-const int Z_AXIS = 2;
-
-const int TRANSFORM_SCALE = 0;
-const int TRANSFORM_ROTATE = 1;
-const int TRANSFORM_TRANSLATE = 2;
-
-const double DELTA_DELTA = 0.1;        // Delta的变化率
-const double DEFAULT_DELTA = 0.3;      // 默认的Delta值
-
-double scaleDelta = DEFAULT_DELTA;
-double rotateDelta = DEFAULT_DELTA;
-double translateDelta = DEFAULT_DELTA;
-
-vec3 scaleTheta(1.0, 1.0, 1.0);        // 缩放控制变量
-vec3 rotateTheta(0.0, 0.0, 0.0);       // 旋转控制变量
-vec3 translateTheta(0.0, 0.0, 0.0);    // 平移控制变量
-
 GLuint mainWin;                                //主窗口
-GLint matrixLocation;                          //矩阵位置
-int currentTransform = TRANSFORM_TRANSLATE;    // 当前绕哪个轴旋转
+GLint mLocation;                          //矩阵位置
+int axis = 0;
+double theta[3] = {0,0,0};  //三个方向的旋转角度
 
 //-----------------------------------------------以下是实现
-// 复原Theta和Delta
-void resetTheta()
-{
-	scaleTheta = vec3(1.0, 1.0, 1.0);
-	rotateTheta = vec3(0.0, 0.0, 0.0);
-	translateTheta = vec3(0.0, 0.0, 0.0);
-	scaleDelta = DEFAULT_DELTA;
-	rotateDelta = DEFAULT_DELTA;
-	translateDelta = DEFAULT_DELTA;
+void mouse(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
+	if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+}
+
+void spinCube() {
+	theta[axis] += 0.1;
+	if (theta[axis] > 360.0) theta[axis] -= 360.0;
+	glutPostRedisplay();
 }
 
 void read_off(string filename) {
@@ -117,7 +99,6 @@ void storeFacesPoints()
 
 		points.push_back(vertices[faces[i].c]);
 		colors.push_back(vertex_colors[i/2]);
-
 	}
 }
 
@@ -155,7 +136,7 @@ void init() {
 	glVertexAttribPointer(cLocation, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(points.size() * sizeof(vec3)));
 
 	// 获得矩阵存储位置
-	matrixLocation = glGetUniformLocation(program, "matrix");  
+	mLocation = glGetUniformLocation(program, "rotation");  
 
 	//黑色背景
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -172,17 +153,8 @@ void display() {   //这里才用到片元着色器
 		   0.0, 0.0, 0.0, 1.0);
 
 	// 调用函数传入三种变化的变化量，计算变化矩阵
-
-
-	//------------------下面这段注释可以打开看看有什么惊喜---------------//
-	// 绘制边
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	// 消除背面光照
-	// 开启面剔除功能
-	//glEnable(GL_CULL_FACE);
-	// 修改剔除的面的类型-GL_BACK & GL_FRONT
-	//glCullFace(GL_FRONT);
-	//-------------------------------------------------------------------//
+	m = RotateX(theta[0])*RotateY(theta[1])*RotateZ(theta[2])*m;
+	glUniformMatrix4fv(mLocation, 1, GL_TRUE, m);
 
 	//绘制顶点
 	glDrawArrays(GL_TRIANGLES, 0, points.size()); //每三个点为一个三角形，绘制正方体
@@ -206,6 +178,8 @@ int main(int argc, char **argv) {
 
 	init();
 	glutDisplayFunc(display);
+	glutIdleFunc(spinCube);
+	glutMouseFunc(mouse);
 
 	//启用深度测试
 	glEnable(GL_DEPTH_TEST);
