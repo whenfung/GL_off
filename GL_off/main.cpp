@@ -52,6 +52,18 @@ void spinCube() {
 	glutPostRedisplay();
 }
 
+void keyboard(unsigned char key, int x, int y) {
+	switch (key)
+	{
+	case 't':
+		glutIdleFunc(spinCube);
+		break;
+	case 'p':
+		glutIdleFunc(NULL);
+		break;
+	}
+}
+
 void read_off(string filename) {
 	if (filename.empty()) return;
 
@@ -180,6 +192,7 @@ int main(int argc, char **argv) {
 	glutDisplayFunc(display);
 	glutIdleFunc(spinCube);
 	glutMouseFunc(mouse);
+	glutKeyboardFunc(keyboard);
 
 	//∆Ù”√…Ó∂»≤‚ ‘
 	glEnable(GL_DEPTH_TEST);
