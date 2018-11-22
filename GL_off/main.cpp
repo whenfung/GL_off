@@ -41,9 +41,16 @@ double theta[3] = {0,0,0};  //三个方向的旋转角度
 
 //-----------------------------------------------以下是实现
 void mouse(int button, int state, int x, int y) {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
-	if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
-	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		//屏幕原点在左上角，即（0，0），我们可以根据屏幕坐标做一些文章
+		if (x - 300 > 0) {
+			axis = 0;
+		}
+		else
+		{
+			axis = 1;
+		}
+	}
 }
 
 void spinCube() {
@@ -60,6 +67,15 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 	case 'p':
 		glutIdleFunc(NULL);
+		break;
+	case 'x':
+		axis = 0;
+		break;
+	case 'y':
+		axis = 1;
+		break;
+	case 'z':
+		axis = 2;
 		break;
 	}
 }
