@@ -43,7 +43,7 @@ double theta[3] = {0,0,0};  //三个方向的旋转角度
 void mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		//屏幕原点在左上角，即（0，0），我们可以根据屏幕坐标做一些文章
-		if (x - 300 > 0) {
+		if (x - 300 > 0) { //300是屏幕宽度的一半
 			axis = 0;
 		}
 		else
@@ -57,6 +57,11 @@ void spinCube() {
 	theta[axis] += 0.1;
 	if (theta[axis] > 360.0) theta[axis] -= 360.0;
 	glutPostRedisplay();
+}
+
+void diration(int key, int x, int y) {
+	if (key == GLUT_KEY_LEFT) axis = 1;
+	if (key == GLUT_KEY_RIGHT) axis = 2;
 }
 
 void keyboard(unsigned char key, int x, int y) {
@@ -209,6 +214,7 @@ int main(int argc, char **argv) {
 	glutIdleFunc(spinCube);
 	glutMouseFunc(mouse);
 	glutKeyboardFunc(keyboard);
+	glutSpecialFunc(diration);
 
 	//启用深度测试
 	glEnable(GL_DEPTH_TEST);
