@@ -64,6 +64,7 @@ void spinCube() {
 void diration(int key, int x, int y) {
 	if (key == GLUT_KEY_LEFT) translateTheta.x += 0.1;
 	if (key == GLUT_KEY_RIGHT) translateTheta.x -= 0.1;
+	//当缩放到负数的时候，图像成镜像图
 	if (key == GLUT_KEY_UP) scale -= 0.1;
 	if (key == GLUT_KEY_DOWN) scale += 0.1;
 }
