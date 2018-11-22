@@ -38,6 +38,7 @@ GLuint mainWin;                                //主窗口
 GLint mLocation;                          //矩阵位置
 int axis = 0;
 double theta[3] = {0,0,0};  //三个方向的旋转角度
+double scale = 1;           //进行放大缩小
 
 //-----------------------------------------------以下是实现
 void mouse(int button, int state, int x, int y) {
@@ -62,6 +63,8 @@ void spinCube() {
 void diration(int key, int x, int y) {
 	if (key == GLUT_KEY_LEFT) axis = 1;
 	if (key == GLUT_KEY_RIGHT) axis = 2;
+	if (key == GLUT_KEY_UP) scale -= 0.1;
+	if (key == GLUT_KEY_DOWN) scale += 0.1;
 }
 
 void keyboard(unsigned char key, int x, int y) {
@@ -186,7 +189,7 @@ void display() {   //这里才用到片元着色器
 		   0.0, 0.0, 0.0, 1.0);
 
 	// 调用函数传入三种变化的变化量，计算变化矩阵
-	m = RotateX(theta[0])*RotateY(theta[1])*RotateZ(theta[2])*m;
+	m = RotateX(theta[0])*RotateY(theta[1])*RotateZ(theta[2]) * Scale(scale) * m;
 	glUniformMatrix4fv(mLocation, 1, GL_TRUE, m);
 
 	//绘制顶点
